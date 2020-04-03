@@ -1,0 +1,25 @@
+For each method, you will receive full marks if you meet all requirements of the method and it works in all test cases. If your method does not work for all test cases, or does not meet all requirements, you may receive up to half of the marks.
+
+
+readFromFile(fileName) method - 10 marks:
+	Returns correct PartImage object when file data is valid
+	Does not make assumptions regarding dimensions
+	Handles FileNotFound and IOException appropriately
+	Throws InvalidPartImageException for invalid data
+	
+print() method - 5 marks:
+	Prints a representation of the part successfully
+	
+findStart() method - 5 marks:
+	Returns a point 2D object with x/y values equal to a row/column that contains a black pixel
+	Returns null if no black pixels are found
+
+expandFrom(int r, int c) method - 10 marks:
+	Successfully finds all black pixels recursively and sets them to white
+	
+perimeterOf(int r, int c) method - 10 marks:
+	Successfully returns perimeter of a part in all test images
+	If there are multiple parts, the perimeter of any part can be returned
+	
+countPieces() - 10 marks:
+	Successully returns the number of pieces for all test images
