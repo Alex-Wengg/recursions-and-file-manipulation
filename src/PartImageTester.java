@@ -10,7 +10,7 @@ public class PartImageTester {
             piB = PartImage.readFromFile("exampleB.txt");
             piC = PartImage.readFromFile("exampleC.txt");
             piD = PartImage.readFromFile("exampleD.txt");
-            piD = PartImage.readFromFile("exampleF.txt");
+
 
         }catch(InvalidPartImageException e) {
             System.out.println("Invalid image data in file: " + e.getFilename());
