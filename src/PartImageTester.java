@@ -22,6 +22,7 @@ public class PartImageTester {
             System.out.println("	size:	" + PartImage.readFromFile("exampleA.txt").partSize());
             System.out.println("	broken:	" + PartImage.readFromFile("exampleA.txt").isBroken());
             System.out.println("	perimeter: " + PartImage.readFromFile("exampleA.txt").perimeter() + "\n");
+
             System.out.println("	# pieces: " + PartImage.readFromFile("exampleA.txt").countPieces() + "\n");
             piA.print();
         }catch(InvalidPartImageException e) {

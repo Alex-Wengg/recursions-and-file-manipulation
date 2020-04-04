@@ -1,8 +1,7 @@
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner; // Import the Scanner class to read text files
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 
 public class PartImage {
@@ -10,6 +9,7 @@ public class PartImage {
     private boolean[][]	visited;
     private int	rows;
     private int	cols;
+    int count=0;
 
     //Creates a new, blank PartImage with the given rows (r) and columns (c)
     public PartImage(int r, int c) {
@@ -22,19 +22,23 @@ public class PartImage {
     //Creates a new PartImage containing rw rows and cl columns
     //Initializes the 2D boolean pixel array based on the provided byte data
     //A 0 in the byte data is treated as false, a 1 is treated as true
-    public PartImage(int rw, int cl, byte[][] data) {
-        this(rw,cl);
+    public PartImage(int rw, int cl, Byte[][] data) {
+        this(rw, cl);
 
 
-
-        for (int r=0; r<10; r++) {
-            for (int c=0; c<10; c++) {
-                if (data[r][c] == 1)
-                    pixels[r][c] = true;
-                else
-                    pixels[r][c]= false;
+        for (int r = 0; r < pixels.length; r++) {
+            for (int c = 0; c < pixels[r].length; c++) {
+                if (data[r][c] !=null){
+                    if (data[r][c] == 1) {
+                         pixels[r][c] = true;
+                    } else {
+                         pixels[r][c] = false;
+                    }
+                }
             }
         }
+
+
     }
 
     public int getRows() { return rows; }
@@ -44,11 +48,12 @@ public class PartImage {
 
 
     public Point2D findStart() {
-       // System.out.println(pixels);
         for (int r=0; r<pixels.length; r++) {
             for (int c=0; c<pixels[r].length; c++) {
                 if (pixels[r][c] == true) {
-                     return new Point2D(r,c);
+                   // System.out.println(pixels[r][c]);
+
+                    return new Point2D(r,c);
                 }
             }
         }
@@ -56,15 +61,102 @@ public class PartImage {
     }
 
     public int partSize() {
-        return 0;
+        int count = 0;
+        for (int r=0; r<pixels.length; r++) {
+            for (int c=0; c<pixels[r].length; c++) {
+                if (pixels[r][c] == true) {
+                    count++;
+
+                }
+            }
+        }
+
+        return count;
     }
 
     private void expandFrom(int r, int c) {
 
+        if (pixels[r][c] == true) {
+            pixels[r][c]=false;
+        }
+        if (r+1 < pixels.length){
+            if (pixels[r+1][c] == true) {
+                 expandFrom(r + 1, c);
+            }
+        }
+        if (r-1 >=0){
+            if (pixels[r-1][c] == true) {
+                  expandFrom(r - 1, c);
+            }
+        }
+        if (c-1 >=0){
+            if (pixels[r][c-1] == true) {
+                  expandFrom(r , c-1);
+            }
+        }
+        if (c+1 < pixels[r].length){
+            if (pixels[r][c+1] == true) {
+                  expandFrom(r, c+1);
+            }
+        }
     }
 
     private int perimeterOf(int r, int c) {
-        return 0;
+        boolean occupied = true;
+        if (pixels[r][c] == true) {
+            visited[r][c]=occupied;
+        }
+        if ((r+1 < pixels.length)||(r-1 >=0)) {
+            if ((pixels[r + 1][c] == false) || (pixels[r - 1][c] == false)) {
+                if ((visited[r][c - 1] != occupied) && (pixels[r][c - 1] == true)) {
+                    visited[r][c - 1] = occupied;
+                    count++;
+
+                    perimeterOf(r, c - 1);
+                }
+                if ((visited[r][c + 1] != occupied) && (pixels[r][c + 1] == true)) {
+                    visited[r][c + 1] = occupied;
+                    count++;
+
+                    perimeterOf(r, c + 1);
+                }
+            }
+        }
+        private int perimeterOf(int r, int c) {
+            boolean occupied = true;
+            visited[r][c] = occupied;
+
+            return (
+
+                    (r < cols-1 && !visited[r+1][c] &&
+                            pixels[r+1][c]) ? perimeterOf(r+1,c) : 0) + ((r > 0 && !visited[r-1][c] && pixels[r-1][c]) ?
+                    perimeterOf(r-1,c): 0) + ((c < rows-1 && !visited[r][c+1] &&
+                    pixels[r][c+1]) ? perimeterOf(r,c+1) : 0) + ((c > 0 && !visited[r][c-1] && pixels[r][c-1]) ?
+                    perimeterOf(r,c-1) : 0) + ((r < cols-1 && !pixels[r+1][c] || r == cols-1) ?
+                    1: 0) + ((r > 0 && !pixels[r-1][c] || r == 0) ?
+                    1: 0) + ((c < rows-1 && !pixels[r][c+1] || c == rows-1) ?
+                    1 : 0) + ((c > 0 && !pixels[r][c-1] || c == 0) ?
+                    1 : 0);
+
+
+
+        if ((c+1 < pixels[r].length)||(c-1 >=0)){
+            if ((pixels[r][c-1] == false)||(pixels[r][c+1] == false)) {
+                if ((visited[r-1][c] != occupied) && (pixels[r-1][c] == true)) {
+                    visited[r-1][c]=occupied;
+                    count++;
+
+                    perimeterOf(r-1, c );
+                }
+                if ((visited[r+1][c] != occupied) && (pixels[r+1][c] == true)) {
+                    visited[r+1][c]=occupied;
+                    count++;
+
+                    perimeterOf(r+1, c );
+                }
+            }
+        return count;
+
     }
 
     public boolean isBroken(){
@@ -83,8 +175,23 @@ public class PartImage {
     }
 
     public void print() {
-        System.out.println("pixels");
-    }
+        ArrayList<String> list=new ArrayList<>();
+        for (int r=0; r<pixels.length; r++) {
+            String sub ="";
+            for (int c=0; c<pixels[r].length; c++) {
+                if (pixels[r][c] == true) {
+                    sub += ("*");
+                } else {
+                    sub+= ("-");
+                }
+            }
+            list.add(sub);
+            }
+        for (String a: list){
+            System.out.println(a);
+        }
+        }
+
 
     public static PartImage readFromFile(String fileName) throws InvalidPartImageException{
          try {
@@ -113,6 +220,7 @@ public class PartImage {
 
                  //we loop through the numbers ignoring the commas to see if there are non 1 and 0s
                  for (int j=0;j < list.get(i).length();j+=2){
+
                      if(!(list.get(i)).substring(j,j+1).contains("1")) {
                          if(!(list.get(i)).substring(j,j+1).contains("0")) {
                              throw new InvalidPartImageException(fileName);
@@ -121,21 +229,22 @@ public class PartImage {
                  }
              }
 
-             Byte[][] data = new Byte[list.size()][list.get(0).length()];
+             Byte[][] data = new Byte[list.size()][(list.get(0).length()+1)/2];
              for (int i=0; i<list.size(); i++) {
                  for (int j=0;j < list.get(i).length();j+=2) {
-                     data[i][j] = Byte.valueOf((list.get(i)).substring(j,j+1));
-             }}
-           //
-             //
-             //  System.out.println(data);
+                     if ((list.get(i)).substring(j, j + 1) != null) {
+                         data[i][j/2] = Byte.valueOf(((list.get(i)).substring(j, j + 1)));
 
-             return new PartImage(list.size(), list.get(0).length());
+                     }
+                 }
 
+             }
+             return new PartImage(list.size(), (list.get(0).length()+1)/2,data);
          } catch (FileNotFoundException e) {
             System.out.println("Error: Cannot open file for reading");
         } catch (IOException e) {
             System.out.println("Error: Cannot read from file");
         }
+
         return null;    }
 }
